@@ -27,25 +27,6 @@ in a structurally informed manner.
 +---------------------+       +-----------------------------+      +-----------------------+              
 ```
 
-```
-                                                   ┌────────────────────┐                                 
-                                                   │Compute features    ├─────────┐                       
-                                                ┌─►│  (MSAs, templates) │         ▼                       
-┌─────────────────────┐   ┌─────────────────────┤  └────────────────────┘   ┌────────────────────────────┐
-│input set of protein │   │Protein fragmentation│                           │ Predict structures of      │
-│names and Uniprot IDs├──►│ using Alphafragment │                           │ complexes using AF-Multimer│
-└─────────────────────┘   └─────────────────────┤  ┌────────────────────┐   └─────────────────────┬──────┘
-                                                └─►│Download precomputed│         ▲               │       
-                                                   │    features        ├─────────┘               │       
-                                                   └────────────────────┘                         │       
-                                                                                                  │       
-                                                                                                  │       
-                                                                                                  │       
-┌─────────────────────┐       ┌─────────────────────────────┐      ┌───────────────────────┐      │       
-│ Generate output csv │◄──────┤ Integrate fragment metrics  │◄─────┤   Score interfaces    │ ◄────┘       
-│   and figures       │       │ into protein metrics        │      │   using Alphajudge    │              
-└─────────────────────┘       └─────────────────────────────┘      └───────────────────────┘              
-```
 
 ## Installation instructions + dependencies
 
