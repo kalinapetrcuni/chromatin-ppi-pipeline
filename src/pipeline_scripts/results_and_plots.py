@@ -10,6 +10,8 @@ def parse_and_validate_requested_metrics(argument, alphajudge_df:pd.DataFrame) -
 
     for metric in metric_list:
         if not metric in alphajudge_df.columns:
+            print(metric)
+            print(alphajudge_df.columns)
             raise ValueError(f"Invalid metric {metric} was requested.")
 
     return metric_list
