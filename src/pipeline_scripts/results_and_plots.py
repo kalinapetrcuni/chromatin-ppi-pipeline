@@ -153,7 +153,7 @@ beta_param = float(os.environ["BETA_PARAM"])
 
 
 # extract the metascore
-results_df = add_metric(alphajudge_output=alphajudge_output, metric="metascore", names_and_ids=names_and_ids, beta=beta_param)
+results_df = add_metric(alphajudge_output=alphajudge_output, metric="interface_meta_score", names_and_ids=names_and_ids, beta=beta_param)
 
 # extract additional metrics requested by the user
 if additional_metrics:
