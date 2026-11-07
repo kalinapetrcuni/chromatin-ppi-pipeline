@@ -9,7 +9,7 @@ export ALPHAJUDGE_VENV=""
 # path MinIO Client binary 
 export MINIO=""
 
-# If you plan to download precomputed features for proteins of model organisms via MinIO client
+# If you plan to download precomputed features for proteins of model organisms 
 # select an organism by uncommenting the corresponding line (ONLY ONE !!!)
 # Please uncomment the blank option if you don't plan on using the download to prevent the ORGANISM variable being undefined. 
 #export ORGANISM=""

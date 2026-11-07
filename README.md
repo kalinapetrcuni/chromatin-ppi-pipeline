@@ -1,32 +1,14 @@
 # chromatin-ppi-pipeline
 
-The `chromatin-ppi-pipeline` is a computational workflow for protein-protein interaction identification and validation. 
-Built on [Alphapulldown v.2](https://github.com/KosinskiLab/AlphaPulldown) using the Alphafold-Multimer protein folding backend, 
-it aims to adress issues related to the large size of chromatin-associated proteins by dividing input proteins into smaller fragments
-in a structure aware manner.
+The `chromatin-ppi-pipeline` is a computational workflow for protein-protein interaction identification and validation 
+built on [Alphapulldown v.2](https://github.com/KosinskiLab/AlphaPulldown) using the Alphafold-Multimer protein folding backend. 
+It aims to adress complications in interaction prediction related to the large size and IDR content of chromatin-associated proteins by dividing input proteins into smaller fragments in a structure aware manner. 
 
 
 ## Pipeline structure
-```
-                                                   +--------------------+                                 
-                                                   |Compute features    +---------+                       
-                                                +->|  (MSAs, templates) |         v                       
-+---------------------+   +---------------------+  +--------------------+   +----------------------------+
-|input set of protein |   |Protein fragmentation|                           | Predict structures of      |
-|names and Uniprot IDs+-->| using Alphafragment |                           | complexes using AF-Multimer|
-+---------------------+   +---------------------+  +--------------------+   +---------------------+------+
-                                                +->|Download precomputed|         ^               |       
-                                                   |    features        +---------+               |       
-                                                   +--------------------+                         |       
-                                                                                                  |       
-                                                                                                  |       
-                                                                                                  |       
-+---------------------+       +-----------------------------+      +-----------------------+      |       
-| Generate output csv |<------+ Integrate fragment metrics  |<-----+   Score interfaces    | <----+       
-|   and figures       |       | into protein metrics        |      |   using Alphajudge    |              
-+---------------------+       +-----------------------------+      +-----------------------+              
-```
-This section offers a logical overview of the pipeline's functions. Details and syntax can be found in the [Usage](#usage) section.
+![](./images/fig_pipeline_diagram.png)
+
+This section offers a logical overview of the pipeline's functions. Details and command syntax can be found in the [Usage](#usage) section.
 
 On the input the pipeline expects a `.csv` file with a set of proteins specified by Uniprot IDs.
 The [Alphafragment](https://github.com/IngeliseH/AlphaFragment) Python package is then used to fetch the amino acid sequences and structural features (known domains and motifs) of the specified proteins from Uniprot and Alphafold Protein Structure database.
@@ -41,7 +23,6 @@ Before proceeding with structure prediction protein features are required. These
 - compute features locally (possible for any protein)
 - download precomputed features from Alphapulldown features database (only possible for a set of model organisms selectable in the global configuration of the pipeline)
 
-Both options have a wrapper implemented here and are thus easily accesible to the user when executing the pipeline steps.
 </details>
 
 
@@ -52,18 +33,169 @@ The resulting structures are analyzed by the [Alphajudge](https://github.com/Kos
 
 To allow for comparison of interactions the information about individual fragment-fragment complexes is summarized for fragment pairs originating from the same pair of proteins using a softmax function yielding a value of the given metric representing the overall protein-protein interaction.
 By default this is performed for the integrative **metascore** metric reported by Alphajudge which is used to rank the interactions.
-Optionally any other numerical metric reported by Alphajudge can be specified by the user to also be summerized from fragments to proteins and reported for later analysis. 
+Optionally any other numerical metric reported by Alphajudge can be specified by the user to also be summerized from fragments to whole proteins and reported for later analysis. 
 
 To simplify the analysis of results exploratory figures showing the ranking by metascore and the distribution of metascores on the dataset are generated.
-For the analysis of individual structures [session scripts](#structure-visualization-scripts-for-ucsf-chimerax) for the UCSF ChimeraX molecular visualization software are provided allowing the user to quickly view any given interface.
+Analysis of individual structures is possible through the provided [session scripts](#structure-visualization-scripts-for-ucsf-chimerax) for the UCSF ChimeraX molecular visualization software allowing the user to quickly view any given interface.
 
 
-## Installation instructions + dependencies
+## Installation & dependencies
 
-TODO: to be added soon 
+
+### Dependencies
+The `chromatin-ppi-pipeline` is designed for the Czech [Metacentrum](https://metavo.metacentrum.cz/en/index.html) computational infrastructure.
+Other platforms are not officially supported.<details>
+<summary>Details:</summary>
+
+The pipeline assumes the OpenPBS scheduling system configured as on Metacentrum, 
+software and data resources available at expected locations etc.
+
+The installation of all software dependencies which are not natively available at Metacentrum and are to be installed by the user is described below.
+</details>
+
+
+### Installation instructions
+
+Clone this repository:
+```
+git clone https://github.com/kalinapetrcuni/chromatin-ppi-pipeline.git
+```
+
+#### Global configuration
+The file `global_config.sh` contains all global configurations which __need to be set before running the pipeline__.
+These parameters set the behaviour of the pipeline across all subsequent runs and direct the pipeline towards software resources.
+Edit it to set the variables accordingly:
+```
+nano chromatin-ppi-pipeline/src/pipeline_scripts/global_config.sh
+```
+
+<details>
+<summary>ALPHAFRAGMENT_VENV = path to a Python virtual enviroment with Alphafragment installed</summary>
+
+To create the enviroment run:
+```
+# clone the Alphafragment repository
+git clone https://github.com/IngeliseH/AlphaFragment.git
+
+# load the Python module on Metacentrum
+module load python
+
+# create a new virtual enviroment called "alphafragment_venv" and activate it
+python -m venv alphafragment_venv
+
+source alphafragment_venv/bin/activate
+
+# move into the Alphafragment repository and install 
+cd AlphaFragment/
+
+pip install .
+
+# deactivate the enviroment
+deactivate
+```
+
+Store the path to the absolute path to the `alphafragment_venv` directory in the variable. 
+You can get it using the following commands:
+```
+cd ../alphafragment_venv
+pwd
+cd ..
+```
+
+</details>
+
+<details>
+<summary>ALPHAJUDGE_VENV = path to a Mamba enviroment with the Alphajudge Python package</summary>
+
+To create the Mamba enviroment run:
+```
+# load the Mamba module on Metacentrum
+module load mambaforge
+
+# create the enviroment
+mamba create -n alphajudge_venv python=3.12
+
+# activate the enviroment
+mamba activate alphajudge_venv
+
+# istall the Alphajudge package
+pip install alphajudge
+
+# deactivate the enviroment
+mamba deactivate
+```
+
+Store the absolute path to the enviroment directory in the variable. 
+The enviroment should be located here:
+```
+cd ~/.conda/envs/alphajudge_venv
+pwd
+```
+</details>
+
+<details>
+<summary>MINIO = path to the MinIO client binary used to download precomputed features</summary>
+
+Download the `mc` binary according to the [MinIO website](https://docs.min.io/aistor/reference/cli/#install-mc). 
+Place it somewhere the pipeline can reach at execution (e.g. somewhere in your home directory at Metacentrum).
+Store the absolute path to the file in the variable.
+</details>
+
+
+<details>
+<summary>ORGANISM = organism selection for precomputed feature download (default = Homo_sapiens)</summary>
+
+__Precomputed features are available for the following organisms:__
+Homo_sapiens
+Escherichia_coli
+Mus_musculus
+Drosophila_melanogaster
+Danio_rerio
+Caenorhabditis_elegans
+Dictyostelium_discoideum
+Methanocaldococcus_jannaschii
+Rattus_norvegicus
+Saccharomyces_cerevisiae
+Oryza_sativa
+Zea_mays
+Glycine_max
+Arabidopsis_thaliana
+
+Each run of the pipeline can only use precomputed features for one organism. As of now it is not possible to combine proteins from several organisms in a single prediction if you wish to use precomputed features.
+
+</details>
+
+<details>
+<summary>BETA_PARAM = beta parameter for softmax function (default = 5)</summary>
+
+used to integrate fragment metrics into protein metrics 
+- score contributions of each fragment pair originating from the same pair of proteins are averaged. The weights in this average are determined by a parametrized softmax function of their scores (better scoring fragments influence the final protein score more).
+- the beta parameter influences whether the weights are more evently distributed across the fragments (low beta) or whether most of the weight is on the top scoring fragment pair (high beta). 
+</details>
+
+
+Once dependencies are installed and global configuration is set the pipeline is ready to be used.
 
 ## Usage
-TODO: to be added soon 
+
+#### Specify the dataset to operate on:
+On input the pipeline expects a `csv` file specifying a set of proteins. 
+<details>
+<summary>Input format details:</summary>
+
+Example `test_names_and_ids.csv`:
+```
+name,accession_id
+Barstar,P11540
+Barnase,P00648
+```
+
+The file should contain 2 columns.
+Each line corresponds to one protein in the dataset.
+The first column `name` can contain an arbitrary user defined name for the protein. It should be unique for each protein and UTF-8 compatible.
+The second column `accession_id` should contain a valid Uniprot ID for the protein.
+</details>
+
 
 ### Structure visualization scripts for UCSF ChimeraX
 
