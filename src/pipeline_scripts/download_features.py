@@ -14,7 +14,7 @@ def download_features(uniprot_ids:list, outdir:str, path_to_mc:str, organism:str
         raise NotADirectoryError(f"Target {outdir} for downloaded features is not a direcotory.")
     
     cmd = [path_to_mc, "cp"]
-    cmd.extend([f"embl/alphapulldown/input_features/{str(organism)}/{id}.pkl.xz" for id in uniprot_ids])
+    cmd.extend([f"embl/alphapulldown/input_features/{str(organism)}/features/{id}.pkl.xz" for id in uniprot_ids])
     cmd.append(str(outdir))
 
     subprocess.run(cmd, check=True)
