@@ -59,7 +59,12 @@ The installation of all software dependencies which are not natively available a
 Clone this repository:
 ```
 git clone https://github.com/kalinapetrcuni/chromatin-ppi-pipeline.git
+
+# set the permissions of pipeline scripts to be executable
+chmod +x chromatin-ppi-pipeline/src/pipeline_scripts/*
 ```
+
+
 
 #### Global configuration
 The file `global_config.sh` contains all global configurations which __need to be set before running the pipeline__.
@@ -68,6 +73,8 @@ Edit it to set the variables accordingly:
 ```
 nano chromatin-ppi-pipeline/src/pipeline_scripts/global_config.sh
 ```
+
+**Variables and how to set them:**
 
 <details>
 <summary>ALPHAFRAGMENT_VENV = path to a Python virtual enviroment with Alphafragment installed</summary>
@@ -188,17 +195,18 @@ Once dependencies are installed and global configuration is set the pipeline is 
 
 ## Usage
 
-#### Specify the dataset to operate on:
-On input the pipeline expects a `csv` file specifying a set of proteins. 
-<details>
-<summary>Input format details:</summary>
+### Specify the dataset to operate on:
+On input the pipeline expects a `csv` file specifying a set of proteins.
 
-Example `test_names_and_ids.csv`:
+Example [test_names_and_ids.csv](./test_names_and_ids.csv):
 ```
 name,accession_id
-Barstar,P11540
-Barnase,P00648
+CalgranulinA,P05109
+CalgranulinB,P06702
 ```
+
+<details>
+<summary>Input format details:</summary>
 
 The file should contain 2 columns.
 Each line corresponds to one protein in the dataset.
@@ -206,6 +214,40 @@ The first column `name` can contain an arbitrary user defined name for the prote
 The second column `accession_id` should contain a valid Uniprot ID for the protein.
 </details>
 
+### Initiatilizing the pipeline
+The pipeline is designed to separate each run (each instance of going through the pipeline with a specified dataset) into a separate directory to make it easy to later determine which settings were used for a given set of calculations.
+
+The script `init_pipeline_structure.sh` generates the directory structure for running the pipeline on a dataset called `test` using the specified input csv.
+The structure is generated in the current working directory starting in a subdirectory matching the specified dataset-name + _dataset. 
+```
+init_pipeline_structure.sh
+   -h | --help    display the help message and quit
+   --dataset-name DATASET_NAME 
+   --input-csv PATH_TO_INPUT_CSV
+```
+
+
+### Running the pipeline
+Navigate into the dataset directory structure job working directory. All following steps of the pipeline should be run from this directory.
+```
+cd <your-dataset-name>_dataset/job_work_dir/
+```
+
+##### Protein fragmentation
+Specify the `name` of the bait protein (interaction of which with all others in the dataset are going to be predicted) as the first positional argument.
+
+```
+../scripts/run_protein_fragmentation.sh <your_name_of_bait_protein>
+```
+##### Compute or download features 
+Computing features locally is computationally intensive and thus has to be submitted as a job to the scheduler
+```
+qsub ../scripts/run_create_features.sh
+```
+Alternatively it is possible to download precomputed features (if you are working with a supported organism see  [Global configuration](#global-configuration) variable ORGANISM)
+```
+
+```
 
 ### Structure visualization scripts for UCSF ChimeraX
 
