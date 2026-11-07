@@ -102,6 +102,8 @@ pwd
 cd ..
 ```
 
+---
+
 </details>
 
 <details>
@@ -131,6 +133,9 @@ The enviroment should be located here:
 cd ~/.conda/envs/alphajudge_venv
 pwd
 ```
+
+---
+
 </details>
 
 <details>
@@ -139,6 +144,8 @@ pwd
 Download the `mc` binary according to the [MinIO website](https://docs.min.io/aistor/reference/cli/#install-mc). 
 Place it somewhere the pipeline can reach at execution (e.g. somewhere in your home directory at Metacentrum).
 Store the absolute path to the file in the variable.
+
+---
 </details>
 
 
@@ -163,6 +170,7 @@ Arabidopsis_thaliana
 
 Each run of the pipeline can only use precomputed features for one organism. As of now it is not possible to combine proteins from several organisms in a single prediction if you wish to use precomputed features.
 
+---
 </details>
 
 <details>
@@ -171,6 +179,8 @@ Each run of the pipeline can only use precomputed features for one organism. As 
 used to integrate fragment metrics into protein metrics 
 - score contributions of each fragment pair originating from the same pair of proteins are averaged. The weights in this average are determined by a parametrized softmax function of their scores (better scoring fragments influence the final protein score more).
 - the beta parameter influences whether the weights are more evently distributed across the fragments (low beta) or whether most of the weight is on the top scoring fragment pair (high beta). 
+
+---
 </details>
 
 
