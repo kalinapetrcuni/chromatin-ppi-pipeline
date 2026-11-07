@@ -227,7 +227,7 @@ init_pipeline_structure.sh
 ```
 
 
-### Running the pipeline
+### Running the pipeline run
 Navigate into the dataset directory structure job working directory. All following steps of the pipeline should be run from this directory.
 ```
 cd <your-dataset-name>_dataset/job_work_dir/
@@ -244,11 +244,48 @@ Computing features locally is computationally intensive and thus has to be submi
 ```
 qsub ../scripts/run_create_features.sh
 ```
-Alternatively it is possible to download precomputed features (if you are working with a supported organism see  [Global configuration](#global-configuration) variable ORGANISM)
+Alternatively it is possible to download precomputed features (if you are working with a supported organism see  [Global configuration](#global-configuration) variable ORGANISM).
+```
+../scripts/run_download_features.sh
 ```
 
+##### Predict structures of complexes
+Computationally intesive (GPU required) -> submitted to the job scheduler
+
 ```
+qsub ../scripts/run_multimer_jobs.sh
+```
+
+#### Analyze structures
+```
+../scripts/run_alphajudge_analysis.sh
+```
+
+#### Generate results summary and figures
+TODO: bug discovered, to be fixed soon
 
 ### Structure visualization scripts for UCSF ChimeraX
+To simplify further analysis of individual complexes 
+we provide 2 scripts to visualize their structures in the ChimeraX software.
 
+The scripts automatically color each interacting partner to distinguish them, color the interface residues and show residue atoms.
+The script `view_full_structure.cxc` shows the whole protein complex providing context but potentially obscuring the view of the interface.
+The script `view_interface.cxc` shows just the interface residues and their immediate surroundings. 
+Usage requires graphical access and an installation of UCSF ChimeraX.
+
+Usage syntax:
+```
+chimerax <path/to/your>/structure.pdb view_interface.cxc
+```
+```
+chimerax <path/to/your>/structure.pdb view_full_structure.cxc
+```
+
+## Contacts and support
 TODO: to be added soon
+
+
+This pipeline was developed as part of a bachelor's thesis on Charles University (Prague). 
+
+
+

@@ -144,7 +144,7 @@ else:
 if not len(args) > 1:
     additional_metrics = []
 else:
-    additional_metrics = parse_and_validate_requested_metrics(args[1]) 
+    additional_metrics = parse_and_validate_requested_metrics(args[1], alphajudge_output) 
 
 # set softmax beta parameter
 beta_param = float(os.environ["BETA_PARAM"])
