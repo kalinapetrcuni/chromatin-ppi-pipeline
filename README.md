@@ -257,12 +257,23 @@ qsub ../scripts/run_multimer_jobs.sh
 ```
 
 #### Analyze structures
+can be run directly 
 ```
 ../scripts/run_alphajudge_analysis.sh
 ```
 
+or for larger datasets submitted to the job scheduler
+
+```
+qsub ../scripts/run_alphajudge_analysis.sh
+```
+
 #### Generate results summary and figures
-TODO: bug discovered, to be fixed soon
+
+TODO: so far generates only results.csv. Plot support to be added soon.
+```
+../scripts/run_results_and_plots.sh
+```
 
 ### Structure visualization scripts for UCSF ChimeraX
 To simplify further analysis of individual complexes 
