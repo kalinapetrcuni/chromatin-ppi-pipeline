@@ -166,7 +166,7 @@ results_dir = Path(os.environ["INPUT_CSV"]).resolve().parent / "results"
 if not results_dir.is_dir():
     raise FileNotFoundError(f"Couldn't save results.csv. Directory {results_dir} does not exist.")
 
-results_df.to_csv(results_dir / "results.csv")
+results_df.to_csv(results_dir / "results.csv", index=False)
 
 
 # TODO: plots, verify there is matplotlib in the env
